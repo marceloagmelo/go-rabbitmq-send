@@ -1,0 +1,15 @@
+#!/bin/bash
+
+SCRIPTS_DIR="info.d"
+
+args=$@
+
+scripts=`ls $SCRIPTS_DIR | sort -r`
+
+pushd $SCRIPTS_DIR > /dev/null
+
+for script in $scripts ; do
+  source $script $args
+done
+
+popd > /dev/null

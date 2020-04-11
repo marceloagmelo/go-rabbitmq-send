@@ -1,0 +1,25 @@
+#!/bin/bash
+
+SCRIPTS_DIR="start.d"
+
+args=""
+
+debug=""
+
+for arg in $@ ; do
+    if [ $arg == "-x" ]; then
+      debug="-x"
+    else
+      args="$args $arg"
+    fi
+done
+
+scripts=`ls $SCRIPTS_DIR | sort -r`
+
+pushd $SCRIPTS_DIR > /dev/null
+
+for script in $scripts ; do
+  source $script
+done
+
+popd > /dev/null

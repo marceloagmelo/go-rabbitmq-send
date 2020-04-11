@@ -1,0 +1,17 @@
+#!/bin/bash
+
+usage(){
+  echo "========================================"
+  echo "USAGE: $0 COMMAND [args]"
+  echo "  Command list:"
+  echo "    - info        : execute info scripts"
+  echo "    - shell       : execute shell scripts"
+  echo "    - start       : execute start scripts"
+  echo "    - status      : execute status scripts"
+  echo "    - test        : execute test scripts"
+  echo "    - threaddump  : Thread dump is created in system out"
+  echo "    - heapdump    : Heap dump file is created in /tmp/jvm.hprof"
+  echo "========================================"
+}
+
+usage

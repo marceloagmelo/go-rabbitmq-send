@@ -1,0 +1,5 @@
+# Arquivo binario
+go-rabbitmq-send
+
+# Vendor
+vendor/

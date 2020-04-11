@@ -1,0 +1,50 @@
+{{define "Index"}}
+
+<!DOCTYPE html>
+<html lang="">
+
+{{template "_head"}}
+
+<body>
+
+    <div class="container">
+        <div class="jumbotron" style="margin-top: 200px;">
+            <a href="/v1/new" style="margin-top: 20px;" class="btn btn-success btn-lg">Adicionar Mensagem</a>
+            <div class="container">
+                <h1 class="text-center">{{.titulo}}</h1>
+                
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Título</th>
+                                <th>Mensagem</th>
+                                <th>Status</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{range .mensagens}}
+                            <tr id="mensagem-row-{{.ID}}"> 
+                                <td>{{.ID}}</td>
+                                <td>{{.Titulo}}</td>
+                                <td>{{.Texto}}</td>
+                                <td>{{.Status}}</td>
+                                <td>
+                                    <a class="btn btn-lg btn-danger" onclick="onDelete('{{.ID}}')" style="margin-right: 5px;">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+{{end}}
