@@ -9,6 +9,7 @@ import (
 //CarregaRotas  as rotas
 func CarregaRotas() {
 	http.HandleFunc("/", controllers.Home)
+	http.HandleFunc("/health", controllers.Health)
 	http.HandleFunc("/v1/new", controllers.New)
 	http.HandleFunc("/v1/insert", controllers.Insert)
 }

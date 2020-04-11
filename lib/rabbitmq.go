@@ -39,12 +39,12 @@ func EnviarMensagemRabbitMQ(conn *amqp.Connection, novoID string) string {
 
 	// Declarara fila
 	q, err := ch.QueueDeclare(
-		"go-rabbitmq", // name
-		false,         // durable
-		false,         // delete when unused
-		false,         // exclusive
-		false,         // no-wait
-		nil,           // arguments
+		fila,  // name
+		false, // durable
+		false, // delete when unused
+		false, // exclusive
+		false, // no-wait
+		nil,   // arguments
 	)
 	mensagem = utils.CheckErr(err, "Declarando fila")
 

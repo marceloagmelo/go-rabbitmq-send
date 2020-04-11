@@ -4,7 +4,9 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"time"
 
+	"github.com/marceloagmelo/go-rabbitmq-send/lib"
 	"github.com/marceloagmelo/go-rabbitmq-send/models"
 )
 
@@ -63,4 +65,24 @@ func Insert(w http.ResponseWriter, r *http.Request) {
 
 	}
 	http.Redirect(w, r, "/", 301)
+}
+
+//Health testa conexão com o mysql e rabbitmq
+func Health(w http.ResponseWriter, r *http.Request) {
+	hora := time.Now().Format("15:04:05")
+
+	var mensagens []models.Mensagem
+	if err := models.MensagemModel.Find().All(&mensagens); err != nil {
+		log.Fatalf("%s: %s", "Erro ao conectar com o banco de dados", err)
+	}
+
+	conn, _ := lib.ConectarRabbitMQ()
+	defer conn.Close()
+
+	data := map[string]interface{}{
+		"titulo": "Lista de Mensagens",
+		"hora":   hora,
+	}
+
+	view.ExecuteTemplate(w, "Health", data)
 }

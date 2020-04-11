@@ -89,7 +89,11 @@
                     },
                     "type": "Rolling"
                 },
-                "triggers": [],
+                "triggers": [
+                    {
+                        "type": "ConfigChange"
+                    }
+                ],
                 "template": {
                     "metadata": {
                         "labels": {
@@ -262,19 +266,19 @@
             "displayName": "Nome da aplicação",
             "description": "Nome da aplicação",
             "required": true,
-            "value": "go-rabbitmq-receive"
+            "value": "go-rabbitmq-send"
         },
         {
             "name": "MYSQL_HOSTNAME",
-            "displayName": "Nome do serviço de banco de dados",
-            "description": "Nome do serviço de banco de dados",
+            "displayName": "Nome do serviço do mysql",
+            "description": "Nome do serviço do mysql",
             "value": "mysqldb",
             "required": true
         },
         {
             "name": "MYSQL_SECRET",
-            "displayName": "Secret do banco de dados",
-            "description": "Secret do banco de dados",
+            "displayName": "Secret do mysql",
+            "description": "Secret do mysql",
             "value": "secret-db-mysqldb",
             "required": true
         },
@@ -315,7 +319,7 @@
         {
             "displayName": "VHost",
             "description": "VHost",
-            "name": "RABBITMQ_DEFAULT_VHOST",
+            "name": "RABBITMQ_VHOST",
             "value": "/"
         }
     ],
