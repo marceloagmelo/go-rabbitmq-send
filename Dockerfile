@@ -3,10 +3,10 @@ FROM golang:1.13.6 AS builder
 
 USER root
 
-ENV APP_HOME /go/src/github.com/marceloagmelo/go-teste-conexao
+ENV APP_HOME /go/src/github.com/marceloagmelo/go-rabbitmq-send
 
 COPY Dockerfile $IMAGE_SCRIPTS_HOME/Dockerfile
-#COPY .netrc /home/golang/.netrc
+
 ADD . $APP_HOME
 
 WORKDIR $APP_HOME
@@ -28,7 +28,7 @@ RUN mkdir -p $APP_HOME
 COPY Dockerfile $APP_HOME/Dockerfile
 
 WORKDIR $APP_HOME
-COPY --from=builder $APP_HOME/go-teste-conexao .
+COPY --from=builder $APP_HOME/go-rabbitmq-send .
 COPY views $APP_HOME/views
 COPY static $APP_HOME/static
 
@@ -36,13 +36,13 @@ COPY static $APP_HOME/static
 ##### We have to expose image metada as label and ENV
 #######################################################################
 LABEL br.com.santander.imageowner="Corporate Techonology" \
-      br.com.santander.description="Teste de conexao runtime for node microservices" \
+      br.com.santander.description="RabbitMQ envio de mensagens runtime for node microservices" \
       br.com.santander.components="Golang Server"
 
 ENV br.com.santander.imageowner="Corporate Techonology"
-ENV br.com.santander.description="Teste de conexao runtime for node microservices"
+ENV br.com.santander.description="RabbitMQ envio de mensagens runtime for node microservices"
 ENV br.com.santander.components="Golang Server"
 
 EXPOSE 8080
 
-CMD [ "go-teste-conexao" ]
+CMD [ "go-rabbitmq-send" ]
