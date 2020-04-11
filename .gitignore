@@ -3,3 +3,4 @@ go-rabbitmq-send
 
 # Vendor
 vendor/
+.vendor-new/
