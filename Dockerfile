@@ -11,9 +11,10 @@ ADD . $APP_HOME
 
 WORKDIR $APP_HOME
 
-RUN go mod init && \
-    #CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o go-teste-conexao && \
-    go install && \
+RUN #go mod init && \
+    #CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o go-rabbitmq-send && \
+    #go install && \
+    go get ./... && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o go-rabbitmq-send && \
     rm -Rf /tmp/* && rm -Rf /var/tmp/*
 
 ###
