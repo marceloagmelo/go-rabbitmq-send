@@ -12,11 +12,9 @@ WORKDIR $APP_HOME
 ###
 # IMAGEM FINAL
 ###
-FROM alpine:3.11
-
-ENV GID 23550
-ENV UID 23550
-ENV USER golang
+FROM scratch
+#FROM alpine:3.6
+#RUN apk add --no-cache ca-certificates
 
 ENV APP_BUILDER /go/src/github.com/marceloagmelo/go-rabbitmq-send/
 ENV APP_HOME /opt/app
@@ -26,11 +24,6 @@ WORKDIR $APP_HOME
 COPY --from=builder $APP_BUILDER/go-rabbitmq-send $APP_HOME/go-rabbitmq-send
 COPY views $APP_HOME/views
 COPY static $APP_HOME/static
-
-RUN apk add --no-cache ca-certificates && \
-    addgroup -g $GID -S $USER && \
-    adduser -u $UID -S -h "$(pwd)" -G $USER $USER && \
-    chown -fR $USER:0 $APP_HOME
 
 #######################################################################
 ##### We have to expose image metada as label and ENV
@@ -47,6 +40,5 @@ ENV PATH $APP_HOME:$PATH
 
 EXPOSE 8080
 
-USER ${USER}
-
 CMD [ "go-rabbitmq-send" ]
+#ENTRYPOINT [ "$APP_HOME/go-rabbitmq-send" ]

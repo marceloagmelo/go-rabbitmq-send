@@ -2,16 +2,15 @@ FROM marceloagmelo/golang-1.13 AS builder
 
 USER root
 
-ENV APP_HOME /go/src/github.com/marceloagmelo/go-teste-conexao
+ENV APP_HOME /go/src/github.com/marceloagmelo/go-rabbitmq-send
 
 COPY Dockerfile $IMAGE_SCRIPTS_HOME/Dockerfile
-#COPY .netrc /home/golang/.netrc
 ADD . $APP_HOME
 
 WORKDIR $APP_HOME
 
 RUN go mod init && \
-    #CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o go-teste-conexao && \
+    #CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o go-rabbitmq-send && \
     go install && \
     chown -R golang:golang $APP_HOME && \
     rm -Rf /tmp/* && rm -Rf /var/tmp/*
@@ -37,12 +36,12 @@ COPY Dockerfile $IMAGE_SCRIPTS_HOME/Dockerfile
 RUN mkdir -p $APP_HOME
 
 WORKDIR $APP_HOME
-COPY --from=builder $GOBIN/go-teste-conexao .
+COPY --from=builder $GOBIN/go-rabbitmq-send .
 COPY views $APP_HOME/views
 COPY static $APP_HOME/static
 
 RUN groupadd --gid $GID golang && useradd --uid $UID -m -g golang golang && \
-    chmod 755 $APP_HOME/go-teste-conexao && \
+    chmod 755 $APP_HOME/go-rabbitmq-send && \
     chown -R golang:golang $APP_HOME && \
     chown -R golang:golang $IMAGE_SCRIPTS_HOME && \
     rm -Rf /tmp/* && rm -Rf /var/tmp/*

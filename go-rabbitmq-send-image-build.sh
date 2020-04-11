@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-docker build -t go-teste-conexao .
+docker build -t marceloagmelo/go-rabbitmq-send .
