@@ -41,7 +41,5 @@ func (m Mensagem) Criar(mensagemModel db.Collection) error {
 	if err != nil {
 		return err
 	}
-
-	log.Printf("Criar(): %s", "SEM ERRROOOO")
 	return nil
 }
