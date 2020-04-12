@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -17,22 +18,24 @@ var view = template.Must(template.ParseGlob("views/*.html"))
 
 //Home é a página inicial da aplicação
 func Home(db db.Database, w http.ResponseWriter, r *http.Request) {
-	mensagemErro := ""
 
 	var mensagens []models.Mensagem
-
 	var mensagemModel = db.Collection("mensagem")
+
 	if err := mensagemModel.Find().All(&mensagens); err != nil {
-		mensagemErro = err.Error()
+		log.Printf("Home(): %s: %s", "Recuperando as mensagens", err)
 	}
 
 	data := map[string]interface{}{
 		"titulo":    "Lista de Mensagens",
 		"mensagens": mensagens,
-		"mensagem":  mensagemErro,
 	}
 
-	view.ExecuteTemplate(w, "Index", data)
+	err := view.ExecuteTemplate(w, "Index", data)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 //New página de edição de uma nova mensagem
@@ -49,6 +52,12 @@ func New(w http.ResponseWriter, r *http.Request) {
 func Insert(db db.Database, w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 
+		err := r.ParseForm()
+		if err != nil {
+			http.Error(w, "form error", http.StatusInternalServerError)
+			return
+		}
+
 		titulo := r.FormValue("titulo")
 		texto := r.FormValue("texto")
 
@@ -63,14 +72,41 @@ func Insert(db db.Database, w http.ResponseWriter, r *http.Request) {
 
 			interf = mensagemForm
 
-			mensagem := interf.Criar(mensagemModel)
-			if mensagem == "" {
-				log.Println(mensagem)
+			//err := interf.Criar(mensagemModel)
+			if err := interf.Criar(mensagemModel); err != nil {
+				//http.Error(w, err.Error(), http.StatusInternalServerError)
+				mensagemErro := fmt.Sprintf("Insert(): %s: %s", "Erro ao criar a mensagem", err)
+				data := map[string]interface{}{
+					"titulo":       "Lista de Mensagens",
+					"mensagemErro": mensagemErro,
+				}
+
+				err := view.ExecuteTemplate(w, "Erro", data)
+				if err != nil {
+					http.Error(w, err.Error(), http.StatusInternalServerError)
+					return
+				}
+				return
 			}
+
+		}
+		log.Println("O envio da mensagem realizado com sucesso!")
+
+		mensagem := fmt.Sprintf("Envio da mensagem realizado com sucesso!")
+		data := map[string]interface{}{
+			"titulo":   "Lista de Mensagens",
+			"mensagem": mensagem,
 		}
 
+		err = view.ExecuteTemplate(w, "Sucesso", data)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		//http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
-	http.Redirect(w, r, "/", 301)
+
 }
 
 //Health testa conexão com o mysql e rabbitmq

@@ -14,11 +14,15 @@
             <h2 class="display-5">{{.titulo}}</h2>
         </div>
     </div>
-    <div class="alert alert-success" id="alerta">
+    <div class="alert alert-success" id="alerta-success">
         <strong>{{.mensagem}}</strong>
+    </div>            
+    <div class="alert alert-danger" id="alerta-error">
+        <strong>{{.mensagemErro}}</strong>
     </div>            
     <form method="POST" action="/v1/insert">
         <input type="hidden" id="mensagem" name="mensagem" value="{{.mensagem}}"/>
+        <input type="hidden" id="mensagemErro" name="mensagemErro" value="{{.mensagemErro}}"/>
         <div class="row">
             <div class="col-sm-8">
                 <div class="form-group">
@@ -45,12 +49,17 @@
 </body>
 
 <script>
-    $('#alerta').hide();
+    $('#alerta-success').hide();
+    $('#alerta-error').hide();
 
     var inputvalue = $("#mensagem").attr("value");
-
     if(inputvalue !== "") {
-        $('#alerta').show();
+        $('#alerta-success').show();
+    }
+
+    var inputvalueErro = $("#mensagemErro").attr("value");
+    if(inputvalueErro !== "") {
+        $('#alerta-error').show();
     }
 
     $(function () {

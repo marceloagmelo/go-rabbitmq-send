@@ -2,9 +2,9 @@ package models
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/marceloagmelo/go-rabbitmq-send/lib"
-	"github.com/marceloagmelo/go-rabbitmq-send/utils"
 	"upper.io/db.v3"
 )
 
@@ -20,20 +20,28 @@ type Mensagem struct {
 
 // Metodos interface
 type Metodos interface {
-	Criar(mensagemModel db.Collection) string
+	Criar(mensagemModel db.Collection) error
 }
 
 //Criar uma mensagem no banco de dados
-func (m Mensagem) Criar(mensagemModel db.Collection) string {
+func (m Mensagem) Criar(mensagemModel db.Collection) error {
 	novoID, err := mensagemModel.Insert(m)
-	mensagem := utils.CheckErr(err, "Gravando mensagem no banco de dados")
-	if mensagem == "" {
-		conn, mensagem := lib.ConectarRabbitMQ()
-		defer conn.Close()
-		if mensagem == "" {
-			strID := fmt.Sprintf("%v", novoID)
-			mensagem = lib.EnviarMensagemRabbitMQ(conn, strID)
-		}
+	if err != nil {
+		log.Printf("Criar(): %s: %s", "Gravando a mensagem no banco de dados", err)
+		return err
 	}
-	return mensagem
+	strID := fmt.Sprintf("%v", novoID)
+	conn, err := lib.ConectarRabbitMQ()
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	err = lib.EnviarMensagemRabbitMQ(conn, strID)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("Criar(): %s", "SEM ERRROOOO")
+	return nil
 }
