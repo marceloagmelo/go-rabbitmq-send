@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"log"
 	"unsafe"
 )
@@ -18,7 +19,8 @@ func CheckErr(err error, msg string) string {
 	mensagem := ""
 
 	if err != nil {
-		log.Printf("CheckErr(): %s: %s", msg, err)
+		mensagem = fmt.Sprintf("CheckErr(): %s: %s", msg, err)
+		log.Printf(mensagem)
 	}
 
 	return mensagem

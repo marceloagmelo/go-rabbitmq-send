@@ -20,10 +20,6 @@ func ConectarRabbitMQ() (conn *amqp.Connection, mensagem string) {
 	conn, err := amqp.Dial(connectionString)
 	mensagem = utils.CheckErr(err, "Conectando com o rabbitmq")
 
-	if mensagem != "" {
-		log.Println(mensagem)
-	}
-
 	return conn, mensagem
 }
 

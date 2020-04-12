@@ -26,7 +26,7 @@ type Metodos interface {
 //Criar uma mensagem no banco de dados
 func (m Mensagem) Criar(mensagemModel db.Collection) string {
 	novoID, err := mensagemModel.Insert(m)
-	mensagem := utils.CheckErr(err, "Conectando com o rabbitmq")
+	mensagem := utils.CheckErr(err, "Gravando mensagem no banco de dados")
 	if mensagem == "" {
 		conn, mensagem := lib.ConectarRabbitMQ()
 		defer conn.Close()
