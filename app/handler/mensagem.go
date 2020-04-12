@@ -152,12 +152,20 @@ func UmaMensagem(db db.Database, w http.ResponseWriter, r *http.Request) {
 
 	resultado := mensagemModel.Find("id=?", id)
 	if count, err := resultado.Count(); count < 1 {
-		respondError(w, http.StatusNotFound, err.Error())
+		log.Printf("UmaMensagem(): %s: %s", "Mensagem não recuperada", err)
+		mensagem := fmt.Sprintf("UmaMensagem(): Mensagem [%v] não recuperada!", id)
+		log.Printf(mensagem)
+
+		respondError(w, http.StatusNotFound, mensagem)
 		return
 	}
 
 	if err := resultado.One(&mensagem); err != nil {
-		respondError(w, http.StatusNotFound, err.Error())
+		log.Printf("UmaMensagem(): %s: %s", "Mensagem não recuperada", err)
+		mensagem := fmt.Sprintf("UmaMensagem(): Mensagem [%v] não recuperada!", id)
+		log.Printf(mensagem)
+
+		respondError(w, http.StatusNotFound, mensagem)
 		return
 	}
 
