@@ -1,4 +1,4 @@
-FROM golang:1.13.6 AS builder
+FROM golang:1.13.6
 
 ENV APP_HOME /go/src/github.com/marceloagmelo/go-rabbitmq-send
 
@@ -6,31 +6,9 @@ ADD . $APP_HOME
 
 WORKDIR $APP_HOME
 
- RUN go get ./... && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o go-rabbitmq-send && \
+RUN go get ./... && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s -w" -o go-rabbitmq-send && \
+    chown -fR $USER:0 $APP_HOME && \
     rm -Rf /tmp/* && rm -Rf /var/tmp/*
-
-###
-# IMAGEM FINAL
-###
-FROM alpine:3.11
-
-ENV GID 23550
-ENV UID 23550
-ENV USER golang
-
-ENV APP_BUILDER /go/src/github.com/marceloagmelo/go-rabbitmq-send/
-ENV APP_HOME /opt/app
-
-WORKDIR $APP_HOME
-
-COPY --from=builder $APP_BUILDER/go-rabbitmq-send $APP_HOME/go-rabbitmq-send
-COPY views $APP_HOME/views
-COPY static $APP_HOME/static
-
-RUN apk add --no-cache ca-certificates && \
-    addgroup -g $GID -S $USER && \
-    adduser -u $UID -S -h "$(pwd)" -G $USER $USER && \
-    chown -fR $USER:0 $APP_HOME
 
 #######################################################################
 ##### We have to expose image metada as label and ENV
@@ -46,7 +24,5 @@ ENV br.com.santander.components="Golang Server"
 ENV PATH $APP_HOME:$PATH
 
 EXPOSE 8080
-
-USER ${USER}
 
 CMD [ "go-rabbitmq-send" ]
