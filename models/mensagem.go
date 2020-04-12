@@ -5,6 +5,7 @@ import (
 
 	"github.com/marceloagmelo/go-rabbitmq-send/lib"
 	"github.com/marceloagmelo/go-rabbitmq-send/utils"
+	"upper.io/db.v3"
 )
 
 //Mensagem estrutura de mensagem
@@ -19,15 +20,12 @@ type Mensagem struct {
 
 // Metodos interface
 type Metodos interface {
-	Criar() string
+	Criar(mensagemModel db.Collection) string
 }
 
-//MensagemModel recebe a tabela do banco de dados
-var MensagemModel = lib.Sess.Collection("mensagem")
-
 //Criar uma mensagem no banco de dados
-func (m Mensagem) Criar() string {
-	novoID, err := MensagemModel.Insert(m)
+func (m Mensagem) Criar(mensagemModel db.Collection) string {
+	novoID, err := mensagemModel.Insert(m)
 	mensagem := utils.CheckErr(err, "Conectando com o rabbitmq")
 	if mensagem == "" {
 		conn, mensagem := lib.ConectarRabbitMQ()

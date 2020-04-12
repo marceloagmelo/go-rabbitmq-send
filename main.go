@@ -2,16 +2,19 @@ package main
 
 import (
 	"log"
-	"net/http"
 
-	"github.com/marceloagmelo/go-rabbitmq-send/routers"
+	"github.com/marceloagmelo/go-rabbitmq-send/app"
+	"github.com/marceloagmelo/go-rabbitmq-send/config"
 )
 
 func main() {
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	//http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
-	routers.CarregaRotas()
+	config := config.GetConfig()
 
+	app := &app.App{}
+	app.Initialize(config)
 	log.Println("Servico escutando a 8080...")
-	http.ListenAndServe(":8080", nil)
+	app.Run(":8080")
+
 }
