@@ -10,16 +10,6 @@ RUN go get ./... && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags "-s 
     chown -fR $USER:0 $APP_HOME && \
     rm -Rf /tmp/* && rm -Rf /var/tmp/*
 
-#######################################################################
-##### We have to expose image metada as label and ENV
-#######################################################################
-LABEL br.com.santander.imageowner="Corporate Techonology" \
-      br.com.santander.description="RabbitMQ envio de mensagens runtime for node microservices" \
-      br.com.santander.components="Golang Server"
-
-ENV br.com.santander.imageowner="Corporate Techonology"
-ENV br.com.santander.description="RabbitMQ envio de mensagens runtime for node microservices"
-ENV br.com.santander.components="Golang Server"
 
 ENV PATH $APP_HOME:$PATH
 

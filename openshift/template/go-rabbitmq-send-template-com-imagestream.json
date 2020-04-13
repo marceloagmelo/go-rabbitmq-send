@@ -46,7 +46,7 @@
                 },
                 "contextDir": "${CONTEXT_DIR}",
                 "sourceSecret": {
-                  "name": "git-user-secret"
+                  "name": "github-secret"
                 }
               },
               "strategy": {
@@ -370,7 +370,7 @@
             "name": "SOURCE_REPOSITORY_URL",
             "displayName": "Git Repository URL",
             "description": "The URL of the repository with your application source code.",
-            "value": "https://GIT_HOST/GIT_GROUP/GIT_PROJECT.git"
+            "value": "https://github.com/marceloagmelo/go-rabbitmq-send.git"
         },
         {
         "name": "SOURCE_REPOSITORY_REF",
