@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
@@ -130,8 +132,8 @@ func Health(db db.Database, w http.ResponseWriter, r *http.Request) {
 	view.ExecuteTemplate(w, "Health", data)
 }
 
-//TodasMensagens gravadas
-func TodasMensagens(db db.Database, w http.ResponseWriter, r *http.Request) {
+//RestTodasMensagens gravadas
+func RestTodasMensagens(db db.Database, w http.ResponseWriter, r *http.Request) {
 	var mensagens []models.Mensagem
 	var mensagemModel = db.Collection("mensagem")
 	if err := mensagemModel.Find().All(&mensagens); err != nil {
@@ -142,8 +144,8 @@ func TodasMensagens(db db.Database, w http.ResponseWriter, r *http.Request) {
 	respondJSON(w, http.StatusOK, mensagens)
 }
 
-//UmaMensagem recuperar mensagem
-func UmaMensagem(db db.Database, w http.ResponseWriter, r *http.Request) {
+//RestUmaMensagem recuperar mensagem
+func RestUmaMensagem(db db.Database, w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
 
@@ -169,5 +171,43 @@ func UmaMensagem(db db.Database, w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, http.StatusOK, mensagem)
+	respondJSON(w, http.StatusCreated, mensagem)
+}
+
+//RestEnviarMensagem recuperar mensagem
+func RestEnviarMensagem(db db.Database, w http.ResponseWriter, r *http.Request) {
+	var novaMensagem models.Mensagem
+
+	if r.Method == "POST" {
+		reqBody, err := ioutil.ReadAll(r.Body)
+		if err != nil {
+			log.Printf("EnviarMensagem(): %s: %s", "Mensagem não enviada", err)
+		}
+
+		json.Unmarshal(reqBody, &novaMensagem)
+
+		fmt.Println("Titulo: ", novaMensagem.Titulo)
+
+		if novaMensagem.Titulo != "" && novaMensagem.Texto != "" {
+			var mensagemModel = db.Collection("mensagem")
+			var interf models.Metodos
+
+			interf = novaMensagem
+
+			//err := interf.Criar(mensagemModel)
+			if err := interf.Criar(mensagemModel); err != nil {
+				mensagemErro := fmt.Sprintf("EnviarMensagem(): %s: %s", "Erro ao criar a mensagem", err)
+				respondError(w, http.StatusInternalServerError, mensagemErro)
+				return
+			}
+		} else {
+			mensagem := fmt.Sprint("EnviarMensagem(): Titulo ou Descrição obrigatórios!")
+			log.Printf(mensagem)
+
+			respondError(w, http.StatusLengthRequired, mensagem)
+			return
+		}
+
+		respondJSON(w, http.StatusCreated, novaMensagem)
+	}
 }

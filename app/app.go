@@ -50,8 +50,9 @@ func (a *App) setRouters() {
 	a.Get("/health", a.handleDBRequest(handler.Health))
 	a.Get("/v1/new", a.handleRequest(handler.New))
 	a.Post("/v1/insert", a.handleDBRequest(handler.Insert))
-	a.Get("/v1/mensagens", a.handleDBRequest(handler.TodasMensagens))
-	a.Get("/v1/mensagem/{id}", a.handleDBRequest(handler.UmaMensagem))
+	a.Post("/v1/mensagem", a.handleDBRequest(handler.RestEnviarMensagem))
+	a.Get("/v1/mensagens", a.handleDBRequest(handler.RestTodasMensagens))
+	a.Get("/v1/mensagem/{id}", a.handleDBRequest(handler.RestUmaMensagem))
 }
 
 // Get wraps the router for GET method
