@@ -20,26 +20,26 @@ type Mensagem struct {
 
 // Metodos interface
 type Metodos interface {
-	Criar(mensagemModel db.Collection) error
+	Criar(mensagemModel db.Collection) (string, error)
 }
 
 //Criar uma mensagem no banco de dados
-func (m Mensagem) Criar(mensagemModel db.Collection) error {
+func (m Mensagem) Criar(mensagemModel db.Collection) (string, error) {
 	novoID, err := mensagemModel.Insert(m)
 	if err != nil {
 		log.Printf("Criar(): %s: %s", "Gravando a mensagem no banco de dados", err)
-		return err
+		return "", err
 	}
 	strID := fmt.Sprintf("%v", novoID)
 	conn, err := lib.ConectarRabbitMQ()
 	if err != nil {
-		return err
+		return "", err
 	}
 	defer conn.Close()
 
 	err = lib.EnviarMensagemRabbitMQ(conn, strID)
 	if err != nil {
-		return err
+		return strID, err
 	}
-	return nil
+	return strID, nil
 }

@@ -75,12 +75,13 @@ func Insert(db db.Database, w http.ResponseWriter, r *http.Request) {
 			interf = mensagemForm
 
 			//err := interf.Criar(mensagemModel)
-			if err := interf.Criar(mensagemModel); err != nil {
+			if strID, err := interf.Criar(mensagemModel); err != nil {
 				//http.Error(w, err.Error(), http.StatusInternalServerError)
 				mensagemErro := fmt.Sprintf("Insert(): %s: %s", "Erro ao criar a mensagem", err)
 				data := map[string]interface{}{
 					"titulo":       "Lista de Mensagens",
 					"mensagemErro": mensagemErro,
+					"id":           strID,
 				}
 
 				err := view.ExecuteTemplate(w, "Erro", data)
@@ -186,8 +187,6 @@ func RestEnviarMensagem(db db.Database, w http.ResponseWriter, r *http.Request) 
 
 		json.Unmarshal(reqBody, &novaMensagem)
 
-		fmt.Println("Titulo: ", novaMensagem.Titulo)
-
 		if novaMensagem.Titulo != "" && novaMensagem.Texto != "" {
 			var mensagemModel = db.Collection("mensagem")
 			var interf models.Metodos
@@ -195,11 +194,24 @@ func RestEnviarMensagem(db db.Database, w http.ResponseWriter, r *http.Request) 
 			interf = novaMensagem
 
 			//err := interf.Criar(mensagemModel)
-			if err := interf.Criar(mensagemModel); err != nil {
+			strID, err := interf.Criar(mensagemModel)
+			if err != nil {
 				mensagemErro := fmt.Sprintf("EnviarMensagem(): %s: %s", "Erro ao criar a mensagem", err)
 				respondError(w, http.StatusInternalServerError, mensagemErro)
 				return
 			}
+
+			log.Println("strID ===  ", strID)
+
+			id, err := strconv.Atoi(strID)
+			if err != nil {
+				if err != nil {
+					mensagemErro := fmt.Sprintf("EnviarMensagem(): %s: %s", "Erro ao criar a mensagem", err)
+					respondError(w, http.StatusInternalServerError, mensagemErro)
+					return
+				}
+			}
+			novaMensagem.ID = id
 		} else {
 			mensagem := fmt.Sprint("EnviarMensagem(): Titulo ou Descrição obrigatórios!")
 			log.Printf(mensagem)
